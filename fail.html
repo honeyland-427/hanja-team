@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>결제 실패 | 혼자 일해도 팀처럼</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFCF4;color:#1E1E1C;font-family:'Noto Sans KR',system-ui,sans-serif;line-height:1.7;word-break:keep-all}
+a{color:#1E1E1C}
+.wrap{max-width:520px;margin:0 auto;padding:72px 20px}
+.card{background:#fff;border:2px solid #1E1E1C;border-radius:26px;padding:32px 26px}
+h1{margin:0 0 8px;font-size:28px;font-weight:900}
+.btn{display:block;margin-top:24px;text-align:center;text-decoration:none;background:#1E1E1C;color:#fff;padding:15px;border-radius:14px;font-weight:700}
+.muted{color:#4A4A44}
+</style>
+</head>
+<body>
+<main class="wrap">
+<div class="card">
+<h1>결제가 완료되지 않았어요</h1>
+<p class="muted" id="msg">결제가 취소되었거나 문제가 생겼어요. 카드에서 돈이 빠져나가지 않았으니 안심하세요.</p>
+<a class="btn" href="/#buy">다시 결제하기</a>
+<p class="muted" style="font-size:14px;margin-top:16px">계속 안 되면 <a href="mailto:hany427@gmail.com">hany427@gmail.com</a>으로 알려주세요.</p>
+</div>
+</main>
+<script>
+var m = new URLSearchParams(location.search).get("message");
+if (m) document.getElementById("msg").textContent = m + " (카드에서 돈이 빠져나가지 않았어요.)";
+</script>
+</body>
+</html>
