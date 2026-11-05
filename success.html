@@ -30,7 +30,8 @@ h1{margin:16px 0 8px;font-size:28px;font-weight:900;letter-spacing:-0.02em}
 (async function () {
   var box = document.getElementById("box");
   var q = new URLSearchParams(location.search);
-  var body = { paymentKey: q.get("paymentKey"), orderId: q.get("orderId"), amount: q.get("amount") };
+  var saved = {}; try { saved = JSON.parse(sessionStorage.getItem("hj_order") || "{}"); } catch (e) {}
+  var body = { paymentKey: q.get("paymentKey"), orderId: q.get("orderId"), amount: q.get("amount"), email: saved.email, name: saved.name };
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
   try {
     var r = await fetch("/api/confirm", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
@@ -39,7 +40,9 @@ h1{margin:16px 0 8px;font-size:28px;font-weight:900;letter-spacing:-0.02em}
     box.innerHTML =
       '<p class="badge">결제 완료</p>' +
       '<h1>감사합니다!</h1>' +
-      '<p class="muted">결제하실 때 입력한 이메일로 24시간 안에 파일을 보내드릴게요. 메일이 안 보이면 스팸함도 확인해 주세요.</p>' +
+      (d.mailSent
+        ? '<p class="muted">결제하실 때 입력한 이메일로 파일을 보내드렸어요. 몇 분 안에 메일이 안 보이면 스팸함도 확인해 주세요.</p>'
+        : '<p class="muted">결제하실 때 입력한 이메일로 24시간 안에 파일을 보내드릴게요. 메일이 안 보이면 스팸함도 확인해 주세요.</p>') +
       '<div style="margin-top:18px">' +
       '<div class="row"><span>상품</span><strong>' + esc(d.orderName) + '</strong></div>' +
       '<div class="row"><span>결제 금액</span><strong>' + Number(d.amount).toLocaleString("ko-KR") + '원</strong></div>' +

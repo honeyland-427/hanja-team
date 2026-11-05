@@ -1,5 +1,7 @@
 // 결제 승인: 토스 결제창에서 돌아온 결제를 최종 확정합니다.
 // 시크릿 키는 Vercel 환경변수 TOSS_SECRET_KEY 에만 넣어 두세요 (코드에 적지 않아요).
+const { sendOrderMails } = require("./_mail");
+
 const PLANS = {
   STD: { name: "전자책 기본 (STANDARD)", amount: 19000 },
   DLX: { name: "전자책 + 업무 템플릿 (DELUXE)", amount: 39000 },
@@ -24,6 +26,8 @@ module.exports = async (req, res) => {
     try { body = JSON.parse(body); } catch (e) { body = {}; }
   }
   const { paymentKey, orderId } = body || {};
+  const fallbackEmail = (body || {}).email;
+  const fallbackName = (body || {}).name;
   const amount = Number((body || {}).amount);
 
   if (!paymentKey || !orderId || !Number.isFinite(amount)) {
@@ -50,8 +54,24 @@ module.exports = async (req, res) => {
       res.status(400).json({ ok: false, message: data.message || "결제 승인에 실패했어요.", code: data.code });
       return;
     }
+    // 결제가 확정되면 손님에게 파일 메일, 대표님께 주문 알림 메일을 보내요.
+    // 메일이 실패해도 결제 완료 화면은 그대로 보여 줘요.
+    const code = String(data.orderId || orderId).split("-")[0];
+    const meta = data.metadata || {};
+    let mail = { customer: false };
+    try {
+      mail = await sendOrderMails({
+        code,
+        email: meta.email || fallbackEmail,
+        name: meta.name || fallbackName,
+        payment: data,
+      });
+    } catch (e) {
+      mail = { customer: false };
+    }
     res.status(200).json({
       ok: true,
+      mailSent: !!mail.customer,
       orderId: data.orderId,
       orderName: data.orderName || plan.name,
       amount: data.totalAmount,

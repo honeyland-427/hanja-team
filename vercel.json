@@ -1,0 +1,5 @@
+{
+  "functions": {
+    "api/confirm.js": { "maxDuration": 30 }
+  }
+}

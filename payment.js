@@ -60,6 +60,7 @@
       if (typeof TossPayments !== "function") throw new Error("결제 모듈을 불러오지 못했어요. 새로고침 후 다시 시도해 주세요.");
 
       var plan = PLANS[current];
+      try { sessionStorage.setItem("hj_order", JSON.stringify({ email: email, name: name })); } catch (e2) {}
       var orderId = current + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
       var tossPayments = TossPayments(cfg.clientKey);
       var payment = tossPayments.payment({ customerKey: TossPayments.ANONYMOUS });
@@ -70,6 +71,7 @@
         orderName: "혼자 일해도 팀처럼 - " + plan.name,
         customerName: name,
         customerEmail: email,
+        metadata: { email: email.slice(0, 200), name: name.slice(0, 40) },
         successUrl: window.location.origin + "/success.html",
         failUrl: window.location.origin + "/fail.html",
         card: { useEscrow: false, flowMode: "DEFAULT", useCardPoint: false, useAppCardOnly: false }
