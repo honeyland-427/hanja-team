@@ -18,6 +18,7 @@
     current = code;
     planName.textContent = PLANS[code].name;
     planPrice.textContent = won(PLANS[code].amount);
+    submitBtn.textContent = won(PLANS[code].amount) + " 결제하기";
     errorBox.textContent = "";
     modal.hidden = false;
     document.body.style.overflow = "hidden";
@@ -84,7 +85,7 @@
       }
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = "결제하기";
+      submitBtn.textContent = current ? won(PLANS[current].amount) + " 결제하기" : "결제하기";
     }
   });
 })();
